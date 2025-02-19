@@ -43,7 +43,7 @@ const mintABI = [
   }
 ]
 
-export async function mintTokens(to: string, amount: bigint) {
+async function mintTokens(to: string, amount: bigint) {
   try {
     // First simulate the transaction
     const { request } = await publicClient.simulateContract({
