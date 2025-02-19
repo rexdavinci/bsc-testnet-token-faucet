@@ -35,7 +35,7 @@ export default function Home() {
           Token Faucet
         </h1>
         <p className="text-gray-300 text-center mb-8">
-          Get test tokens for development
+          Get bsc test tokens for development
         </p>
 
         <div className="space-y-6">
