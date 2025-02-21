@@ -1,6 +1,7 @@
 import { createPublicClient, createWalletClient, http, parseEther } from 'viem';
 import { bscTestnet } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
+import gitHash from 'child_process'
 
 // // Replace with your private key
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
@@ -53,7 +54,7 @@ async function mintTokens(to: string, amount: bigint) {
       functionName: 'mint',
       args: [to, amount]
     });
-    
+
     // If simulation succeeds, execute the actual transaction
     const hash = await walletClient.writeContract(request);
     return hash;
@@ -66,11 +67,26 @@ async function mintTokens(to: string, amount: bigint) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { to } = body as { to: string };
-    const hash = await mintTokens(to, parseEther('100'))
+    const { to, amount } = body as { to: string; amount: string };
+    const hash = await mintTokens(to, parseEther(amount))
     return Response.json({ success: true, data: hash });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return Response.json({ success: false, data: errorMessage });
   }
 }
+
+
+export async function GET() {
+  try {
+    const res = gitHash.execSync('git rev-parse HEAD')
+      .toString()
+      .trim();
+    return Response.json({ success: true, data: res });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to get git hash';
+    return Response.json({ success: false, data: errorMessage });
+  }
+}
+
+
