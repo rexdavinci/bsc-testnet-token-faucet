@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [address, setAddress] = useState("");
   const [fetching, setFetching] = useState(false);
-  const [txHash, setTxHash] = useState();
+  const [txHash, setTxHash] = useState<
+    { hash?: string; ethHash?: string } | undefined
+  >(undefined);
+  const [error, setError] = useState();
   const [amount, setAmount] = useState("");
   const [commitHash, setCommitHash] = useState("");
 
@@ -18,7 +21,11 @@ export default function Home() {
       body: JSON.stringify({ to: address, amount }),
     });
     const data = await res.json();
-    setTxHash(data.data);
+    if(!data.success) {
+      setError(data.data);
+    } else {
+      setTxHash(data.data);
+    }
 
     setFetching(false);
   };
@@ -57,25 +64,49 @@ export default function Home() {
             </svg>
             Source Code
           </a>
-          <a href={`https://github.com/rexdavinci/bsc-testnet-token-faucet/commit/${commitHash}`} target="_blank"
-            rel="noopener noreferrer" className="text-gray-400 font-mono text-sm">
+          <a
+            href={`https://github.com/rexdavinci/bsc-testnet-token-faucet/commit/${commitHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 font-mono text-sm"
+          >
             {/* {commitHash && `version: commit${commitHash.slice(4)}` || ""} */}
-            {commitHash && `version: ${commitHash.slice(0, 8)}` || ""}
+            {(commitHash && `version: ${commitHash.slice(0, 8)}`) || ""}
           </a>
         </div>
       </nav>
       <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 flex flex-col items-center justify-center p-4">
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 max-w-md w-full shadow-xl">
           {txHash && (
-            <div className="mb-6 p-4 bg-green-500/20 border border-green-500/40 rounded-lg">
-              <p className="text-green-300 text-sm break-all">
-                Transaction Hash:{" "}
-                <a href={`https://testnet.bscscan.com/tx/${txHash}`}>
-                  {txHash}
-                </a>
-              </p>
-            </div>
+            <>
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/40 rounded-lg">
+                <p className="text-green-300 text-sm break-all">
+                  BNB:{" "}
+                  <a href={`https://testnet.bscscan.com/tx/${txHash.hash}`}>
+                    {txHash.hash}
+                  </a>
+                </p>
+              </div>
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/40 rounded-lg">
+                <p className="text-green-300 text-sm break-all">
+                  Token:{" "}
+                  <a href={`https://testnet.bscscan.com/tx/${txHash!.ethHash}`}>
+                    {txHash.ethHash}
+                  </a>
+                </p>
+              </div>
+            </>
           )}
+
+          {
+            error && (
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/40 rounded-lg">
+                <p className="text-red-300 text-sm break-all">
+                  {error}
+                </p>
+              </div>
+            )
+          }
           <h1 className="text-4xl font-bold text-white mb-2 text-center">
             Token Faucet
           </h1>
@@ -92,14 +123,17 @@ export default function Home() {
                 className="w-full px-4 py-3 rounded-lg bg-white/5 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               />
             </div>
-            <div>
+            <div className="relative">
               <input
                 type="number"
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="Enter amount of tokens"
-                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                className="w-full px-4 py-3 pr-16 rounded-lg bg-white/5 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 min="0"
               />
+              <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 font-medium">
+                MOCKs
+              </span>
             </div>
             <button
               disabled={fetching || !address}

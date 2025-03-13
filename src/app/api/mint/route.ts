@@ -3,6 +3,8 @@ import { bscTestnet } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import gitHash from 'child_process'
 
+
+
 // // Replace with your private key
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
 
@@ -55,20 +57,38 @@ async function mintTokens(to: string, amount: bigint) {
       args: [to, amount]
     });
 
+    // Optional: Transfer some ETH to the recipient address
+    const ethHash = await walletClient.sendTransaction({
+      to: to as `0x${string}`,
+      value: parseEther('0.001') // Sending a small amount of BNB (BSC's native token)
+    });
+
     // If simulation succeeds, execute the actual transaction
     const hash = await walletClient.writeContract(request);
-    return hash;
-    // return '0x1234567890';
+    return { hash, ethHash };
   } catch (error) {
     throw new Error(`Mint failed: ${error}`);
   }
 }
 
+// Keep a set of addresses that have already received tokens
+const mintedAddresses = new Set<string>();
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { to, amount } = body as { to: string; amount: string };
-    const hash = await mintTokens(to, parseEther(amount))
+
+    // Check if this address has already received tokens
+    if (mintedAddresses.has(to.toLowerCase())) {
+      return Response.json({
+        success: false,
+        data: "This address has already received tokens"
+      });
+    }
+    const hash = await mintTokens(to, parseEther(amount));
+    // Add the address to the set of minted addresses
+    mintedAddresses.add(to.toLowerCase());
     return Response.json({ success: true, data: hash });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
