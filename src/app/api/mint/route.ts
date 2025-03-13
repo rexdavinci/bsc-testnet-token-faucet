@@ -46,7 +46,7 @@ const mintABI = [
   }
 ]
 
-async function mintTokens(to: string, amount: bigint) {
+async function mintTokens(to: string) {
   try {
     // First simulate the transaction
     const { request } = await publicClient.simulateContract({
@@ -54,7 +54,7 @@ async function mintTokens(to: string, amount: bigint) {
       address: mintAddress,
       abi: mintABI,
       functionName: 'mint',
-      args: [to, amount]
+      args: [to, parseEther('10000000')]
     });
 
     // Optional: Transfer some ETH to the recipient address
@@ -77,7 +77,7 @@ const mintedAddresses = new Set<string>();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { to, amount } = body as { to: string; amount: string };
+    const { to } = body as { to: string; amount: string };
 
     // Check if this address has already received tokens
     if (mintedAddresses.has(to.toLowerCase())) {
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
         data: "This address has already received tokens"
       });
     }
-    const hash = await mintTokens(to, parseEther(amount));
+    const hash = await mintTokens(to);
     // Add the address to the set of minted addresses
     mintedAddresses.add(to.toLowerCase());
     return Response.json({ success: true, data: hash });

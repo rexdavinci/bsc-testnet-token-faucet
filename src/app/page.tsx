@@ -8,7 +8,6 @@ export default function Home() {
     { hash?: string; ethHash?: string } | undefined
   >(undefined);
   const [error, setError] = useState();
-  const [amount, setAmount] = useState("");
   const [commitHash, setCommitHash] = useState("");
 
   const handleRequestTokens = async () => {
@@ -18,7 +17,7 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ to: address, amount }),
+      body: JSON.stringify({ to: address }),
     });
     const data = await res.json();
     if(!data.success) {
@@ -122,18 +121,6 @@ export default function Home() {
                 placeholder="Enter your wallet address"
                 className="w-full px-4 py-3 rounded-lg bg-white/5 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               />
-            </div>
-            <div className="relative">
-              <input
-                type="number"
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Enter amount of tokens"
-                className="w-full px-4 py-3 pr-16 rounded-lg bg-white/5 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-                min="0"
-              />
-              <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 font-medium">
-                MOCKs
-              </span>
             </div>
             <button
               disabled={fetching || !address}
