@@ -108,7 +108,7 @@ export default function Home() {
             )
           }
           <h1 className="text-4xl font-bold text-white mb-2 text-center">
-            Token Faucet
+            BNB & Token Faucet
           </h1>
           <p className="text-gray-300 text-center mb-8">
             Get bsc test tokens for development
