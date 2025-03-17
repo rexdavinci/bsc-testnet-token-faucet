@@ -46,13 +46,13 @@ export default function Home() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-white/10 backdrop-blur-lg p-4">
+      <nav className="fixed top-0 left-0 right-0 bg-gray-900/95 backdrop-blur-lg p-4 border-b border-gray-800">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <a
             href="https://github.com/rexdavinci/bsc-testnet-token-faucet"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white hover:text-purple-300 transition flex items-center gap-2"
+            className="text-amber-400 hover:text-amber-300 transition flex items-center gap-2"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -69,27 +69,26 @@ export default function Home() {
             rel="noopener noreferrer"
             className="text-gray-400 font-mono text-sm"
           >
-            {/* {commitHash && `version: commit${commitHash.slice(4)}` || ""} */}
             {(commitHash && `version: ${commitHash.slice(0, 8)}`) || ""}
           </a>
         </div>
       </nav>
-      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 flex flex-col items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 max-w-md w-full shadow-xl">
+      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-amber-900 flex flex-col items-center justify-center p-4">
+        <div className="bg-gray-800/80 backdrop-blur-lg rounded-2xl p-8 max-w-md w-full shadow-lg border border-gray-700">
           {txHash && (
             <>
-              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/40 rounded-lg">
-                <p className="text-green-300 text-sm break-all">
+              <div className="mb-6 p-4 bg-green-900/30 border border-green-700 rounded-lg">
+                <p className="text-green-400 text-sm break-all">
                   BNB:{" "}
-                  <a href={`https://testnet.bscscan.com/tx/${txHash.hash}`}>
+                  <a href={`https://testnet.bscscan.com/tx/${txHash.hash}`} className="text-amber-400 hover:text-amber-300">
                     {txHash.hash}
                   </a>
                 </p>
               </div>
-              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/40 rounded-lg">
-                <p className="text-green-300 text-sm break-all">
+              <div className="mb-6 p-4 bg-green-900/30 border border-green-700 rounded-lg">
+                <p className="text-green-400 text-sm break-all">
                   Token:{" "}
-                  <a href={`https://testnet.bscscan.com/tx/${txHash!.ethHash}`}>
+                  <a href={`https://testnet.bscscan.com/tx/${txHash!.ethHash}`} className="text-amber-400 hover:text-amber-300">
                     {txHash.ethHash}
                   </a>
                 </p>
@@ -97,16 +96,14 @@ export default function Home() {
             </>
           )}
 
-          {
-            error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/40 rounded-lg">
-                <p className="text-red-300 text-sm break-all">
-                  {error}
-                </p>
-              </div>
-            )
-          }
-          <h1 className="text-4xl font-bold text-white mb-2 text-center">
+          {error && (
+            <div className="mb-6 p-4 bg-red-900/30 border border-red-700 rounded-lg">
+              <p className="text-red-400 text-sm break-all">
+                {error}
+              </p>
+            </div>
+          )}
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 mb-2 text-center">
             BNB & Token Faucet
           </h1>
           <p className="text-gray-300 text-center mb-8">
@@ -119,16 +116,16 @@ export default function Home() {
                 onChange={(e) => setAddress(e.target.value)}
                 type="text"
                 placeholder="Enter your wallet address"
-                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
               />
             </div>
             <button
               disabled={fetching || !address}
               onClick={handleRequestTokens}
-              className={`w-full text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-all ${
+              className={`w-full font-semibold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-all ${
                 fetching || !address
-                  ? "bg-purple-400 cursor-not-allowed opacity-60"
-                  : "bg-purple-600 hover:bg-purple-700"
+                  ? "bg-gradient-to-r from-amber-700 to-amber-600 cursor-not-allowed opacity-60"
+                  : "bg-gradient-to-r from-amber-600 to-amber-400 hover:from-amber-500 hover:to-amber-300 text-gray-900"
               }`}
             >
               <span>{!fetching ? `Request Tokens` : `Requesting...`}</span>
